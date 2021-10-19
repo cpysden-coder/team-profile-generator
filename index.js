@@ -1,13 +1,16 @@
 //Set up dependencies
 const inquirer = require("inquirer");
+const fs = require("fs");
 const Employee = require("./lib/Employee");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
+const generateHTML = require("./util/generateHtml");
 
-const managers = [];
-const engineers = [];
-const interns = [];
+const team = [];
+// const managers = [];
+// const engineers = [];
+// const interns = [];
 
 //ask Question function to prompt user for answers
 function askQuestion() {
@@ -15,7 +18,7 @@ function askQuestion() {
         {
             name: "question",
             type: "list",
-            choices: ["Add a Manager", "Add an Engineer", "Add an Intern", "No more team members to add"]
+            choices: ["Add a Manager", "Add an Engineer", "Add an Intern", "No more team members to add - build team"]
         }
     ]).then(answers => {
         switch (answers.question) {
@@ -32,6 +35,18 @@ function askQuestion() {
             case "Add an Intern":
                 console.log("add an intern!")
                 addIntern();
+                break;
+
+            case "No more team members to add - build team":
+                console.log("finished creating team members to add - building team!")
+                console.log(`${team}`)
+                console.log(team[0]);
+                team.forEach(person => {
+                    console.log(person.role +" role");
+                });
+                // generateHTML(team);
+                // const htmlPageContent = generateHTML(answers);
+                fs.writeFile('index.html', generateHTML(team), (err) => err ? console.log(err) : console.log('Successfully created index.html!'));
                 break;
 
             default:
@@ -70,8 +85,9 @@ function addManager() {
     ]).then(({ name, id, email, officeNumber }) => {
         console.log(name);
         const mgr = new Manager(name, id, email, officeNumber);
-        managers.push(mgr)
-        console.log(managers);
+        team.push(mgr)
+        console.log(team);
+        console.log(team.role);
         askQuestion();
     })
 }
@@ -101,8 +117,8 @@ function addEngineer() {
     ]).then(({ name, id, email, github }) => {
         console.log(name);
         const eng = new Engineer(name, id, email, github);
-        engineers.push(eng)
-        console.log(engineers);
+        team.push(eng)
+        console.log(team);
         askQuestion();
     })
 }
@@ -134,8 +150,9 @@ function addIntern() {
     ]).then(({ name, id, email, school }) => {
         console.log(name);
         const int = new Intern(name, id, email, school);
-        interns.push(int)
-        console.log(interns);
+        team.push(int)
+        console.log(team);
         askQuestion();
     })
 }
+
